@@ -204,16 +204,15 @@ public class HeadPhoneListener extends BroadcastReceiver implements
                 super.handleMessage(msg);
                 switch (msg.what) {
                     case 1:
-
                         if (msg.obj instanceof ArrayList) {
                             mSpeechRecognizer.stopListening();
                             ArrayList<String> list = (ArrayList<String>) msg.obj;
                             Log.e(TAG, "Words: " + list.toString());
-                            if (list.contains("No") || list.contains("no")) {
+                            if (list.contains("Ignore") || list.contains("ignore")) {
                                 if (!hangUpIncomingCall()) {
                                     Log.e(TAG, "Unable to end Call!");
                                 }
-                            } else if (list.contains("Yes") || list.contains("yes")) {
+                            } else if (list.contains("Answer") || list.contains("answer")) {
                                 if (!receiveIncomingCall()) {
                                     Log.i(TAG, "Unable to receive Call!");
                                 }
