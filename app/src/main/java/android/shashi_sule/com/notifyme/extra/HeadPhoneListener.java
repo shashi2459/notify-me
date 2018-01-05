@@ -232,19 +232,6 @@ public class HeadPhoneListener extends BroadcastReceiver implements
         };
     }
 
-    void readNotification(StatusBarNotification notification) {
-        if (sTextToSpeech == null) return;
-
-        Notification not = notification.getNotification();
-        CharSequence text = not.tickerText;
-        int speak = sTextToSpeech.speak(text, android.speech.tts.TextToSpeech.QUEUE_ADD, Bundle.EMPTY, "1111");
-
-        if (speak < 0) {
-            Toast.makeText(mContext, "Unable to speak!", Toast.LENGTH_SHORT).show();
-            Log.d(TAG, "readNotification: Unable to speak!");
-        }
-    }
-
     @Override
     public void onInit(final int status) {
         if (status != android.speech.tts.TextToSpeech.SUCCESS) {

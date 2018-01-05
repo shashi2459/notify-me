@@ -20,6 +20,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -132,19 +133,25 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void permissionsCheck() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            Utils.requestPermission(this, Manifest.permission.READ_CONTACTS,
-                    REQUEST_CONTACT_PERMISSION);
-        }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            Utils.requestPermission(this, Manifest.permission.READ_PHONE_STATE,
-                    REQUEST_PHONE_STATE_PERMISSION);
-        }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            Utils.requestPermission(this, Manifest.permission.RECORD_AUDIO,
-                    REQUEST_RECORD_AUDIO_PERMISSION);
-        }
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+//            Utils.requestPermission(this, Manifest.permission.READ_CONTACTS,
+//                    REQUEST_CONTACT_PERMISSION);
+//        }
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+//
+//            Utils.requestPermission(this, Manifest.permission.READ_PHONE_STATE,
+//                    REQUEST_PHONE_STATE_PERMISSION);
+//        }
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+//            Utils.requestPermission(this, Manifest.permission.RECORD_AUDIO,
+//                    REQUEST_RECORD_AUDIO_PERMISSION);
+//        }
 
+        requestPermissions(new String[]{
+                Manifest.permission.READ_CONTACTS,
+                Manifest.permission.RECORD_AUDIO,
+                Manifest.permission.READ_PHONE_STATE},
+                REQUEST_CONTACT_PERMISSION);
     }
 
     @Override
@@ -173,17 +180,18 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(final Menu menu) {
-        getMenuInflater().inflate(R.menu.setting_menu, menu);
+//        getMenuInflater().inflate(R.menu.setting_menu, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(final MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_setting:
-                startActivity(new Intent(this, SettingsActivity.class));
-                break;
-        }
+//        switch (item.getItemId()) {
+//            case R.id.action_setting:
+//                Toast.makeText(this, "", Toast.LENGTH_SHORT).show();
+//                startActivity(new Intent(this, SettingsActivity.class));
+//                break;
+//        }
         return true;
     }
 
