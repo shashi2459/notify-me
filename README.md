@@ -12,4 +12,4 @@
    
    The main purpose of this app is to avoid unwanted calls or attending priority or important calls while you are driving.
    
-   Of cource this app serves my needs and it may or may not feet in your case.
+   This app serves my needs and it may or may not feet in your case.
