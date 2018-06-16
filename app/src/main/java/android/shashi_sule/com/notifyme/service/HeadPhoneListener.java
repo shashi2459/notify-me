@@ -1,4 +1,4 @@
-package android.shashi_sule.com.notifyme.extra;
+package android.shashi_sule.com.notifyme.service;
 
 import android.Manifest;
 import android.app.Activity;
@@ -11,6 +11,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.shashi_sule.com.notifyme.tts.SpeechListener;
+import android.shashi_sule.com.notifyme.utils.Utils;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
 import android.speech.tts.TextToSpeech;
@@ -23,11 +25,11 @@ import android.widget.Toast;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 
-import static android.shashi_sule.com.notifyme.extra.Utils.INTENT_PHONE_STATE;
-import static android.shashi_sule.com.notifyme.extra.Utils.REQUEST_CONTACT_PERMISSION;
-import static android.shashi_sule.com.notifyme.extra.Utils.REQUEST_PHONE_STATE_PERMISSION;
-import static android.shashi_sule.com.notifyme.extra.Utils.REQUEST_RECORD_AUDIO_PERMISSION;
-import static android.shashi_sule.com.notifyme.ui.MainActivity.DELAY_MILLIS;
+import static android.shashi_sule.com.notifyme.utils.Utils.INTENT_PHONE_STATE;
+import static android.shashi_sule.com.notifyme.utils.Utils.REQUEST_CONTACT_PERMISSION;
+import static android.shashi_sule.com.notifyme.utils.Utils.REQUEST_PHONE_STATE_PERMISSION;
+import static android.shashi_sule.com.notifyme.utils.Utils.REQUEST_RECORD_AUDIO_PERMISSION;
+import static android.shashi_sule.com.notifyme.tts.MainActivity.DELAY_MILLIS;
 
 /**
  * @author Shashi on 10/21/2017.

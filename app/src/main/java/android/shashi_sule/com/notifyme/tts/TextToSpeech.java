@@ -1,4 +1,4 @@
-package android.shashi_sule.com.notifyme.extra;
+package android.shashi_sule.com.notifyme.tts;
 
 import android.app.Notification;
 import android.content.Context;
@@ -7,7 +7,7 @@ import android.service.notification.StatusBarNotification;
 import android.util.Log;
 import android.widget.Toast;
 
-class TextToSpeech implements android.speech.tts.TextToSpeech.OnInitListener {
+public class TextToSpeech implements android.speech.tts.TextToSpeech.OnInitListener {
 
     private Context mContext;
 
@@ -19,7 +19,7 @@ class TextToSpeech implements android.speech.tts.TextToSpeech.OnInitListener {
 
     }
 
-    static TextToSpeech getInstance() {
+    public static TextToSpeech getInstance() {
         if (sInstance == null) {
             sInstance = new TextToSpeech();
         }
@@ -33,7 +33,7 @@ class TextToSpeech implements android.speech.tts.TextToSpeech.OnInitListener {
         }
     }
 
-    void readNotification(StatusBarNotification notification) {
+    public void readNotification(StatusBarNotification notification) {
         if (sTextToSpeech == null) return;
 
         Notification not = notification.getNotification();

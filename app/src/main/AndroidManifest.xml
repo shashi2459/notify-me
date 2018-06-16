@@ -14,7 +14,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ui.MainActivity">
+        <activity android:name=".tts.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <action android:name="android.intent.action.HEADSET_PLUG" />
@@ -24,7 +24,7 @@
         </activity>
 
         <receiver
-            android:name=".extra.HeadPhoneListener"
+            android:name=".service.HeadPhoneListener"
             android:enabled="true"
             android:exported="true">
             <intent-filter>
@@ -35,7 +35,7 @@
         </receiver>
 
         <service
-            android:name=".extra.MyService"
+            android:name=".service.MyService"
             android:enabled="true"
             android:exported="true"
             android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
@@ -45,7 +45,7 @@
         </service>
 
         <activity
-            android:name=".ui.SettingsActivity"
+            android:name=".setting.SettingsActivity"
             android:label="@string/title_activity_settings" />
 
     </application>

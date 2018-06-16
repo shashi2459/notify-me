@@ -1,4 +1,4 @@
-package android.shashi_sule.com.notifyme.extra;
+package android.shashi_sule.com.notifyme.tts;
 
 import android.content.BroadcastReceiver;
 

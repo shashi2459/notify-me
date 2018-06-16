@@ -1,4 +1,4 @@
-package android.shashi_sule.com.notifyme.ui;
+package android.shashi_sule.com.notifyme.tts;
 
 import android.Manifest;
 import android.content.Intent;
@@ -7,8 +7,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.shashi_sule.com.notifyme.R;
-import android.shashi_sule.com.notifyme.extra.HeadPhoneListener;
-import android.shashi_sule.com.notifyme.extra.SpeechListener;
+import android.shashi_sule.com.notifyme.service.HeadPhoneListener;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
 import android.support.annotation.NonNull;
@@ -21,9 +20,9 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-import static android.shashi_sule.com.notifyme.extra.Utils.INTENT_PHONE_STATE;
-import static android.shashi_sule.com.notifyme.extra.Utils.REQUEST_CONTACT_PERMISSION;
-import static android.shashi_sule.com.notifyme.extra.Utils.REQUEST_PHONE_STATE_PERMISSION;
+import static android.shashi_sule.com.notifyme.utils.Utils.INTENT_PHONE_STATE;
+import static android.shashi_sule.com.notifyme.utils.Utils.REQUEST_CONTACT_PERMISSION;
+import static android.shashi_sule.com.notifyme.utils.Utils.REQUEST_PHONE_STATE_PERMISSION;
 
 public class MainActivity extends AppCompatActivity {
 

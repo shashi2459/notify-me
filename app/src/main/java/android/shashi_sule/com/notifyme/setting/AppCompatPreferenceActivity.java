@@ -1,4 +1,4 @@
-package android.shashi_sule.com.notifyme.ui;
+package android.shashi_sule.com.notifyme.setting;
 
 import android.content.res.Configuration;
 import android.os.Bundle;

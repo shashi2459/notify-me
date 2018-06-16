@@ -1,4 +1,4 @@
-package android.shashi_sule.com.notifyme.ui;
+package android.shashi_sule.com.notifyme.setting;
 
 import android.annotation.TargetApi;
 import android.content.Context;

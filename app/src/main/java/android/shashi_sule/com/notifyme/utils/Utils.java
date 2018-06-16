@@ -1,4 +1,4 @@
-package android.shashi_sule.com.notifyme.extra;
+package android.shashi_sule.com.notifyme.utils;
 
 import android.app.Activity;
 import android.content.Context;
@@ -36,7 +36,7 @@ public class Utils {
         }
     }
 
-    static String getContactName(final String phoneNumber, Context context) {
+    public static String getContactName(final String phoneNumber, Context context) {
         Uri uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri.encode(phoneNumber));
 
         String[] projection = new String[]{ContactsContract.PhoneLookup.DISPLAY_NAME};
