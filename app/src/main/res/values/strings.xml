@@ -76,4 +76,6 @@
     <string name="connect_headsets">Connect your headsets to phone</string>
     <string name="hear_all_your_notifications_n_instead_of_reading_them_cheers">
         Hear all your notifications instead of reading them.\nCheers!!!</string>
+    <string name="notify">Notify</string>
+    <string name="setting">Setting</string>
 </resources>

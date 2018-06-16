@@ -2,17 +2,15 @@ package android.shashi_sule.com.notifyme.extra;
 
 import android.annotation.SuppressLint;
 import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
 import android.service.notification.NotificationListenerService;
 import android.service.notification.StatusBarNotification;
-import android.shashi_sule.com.notifyme.ui.MainActivity;
 import android.util.Log;
 
 public class MyService extends NotificationListenerService {
 
-    public static final String TAG = "NotificationListenerService";
+    private static final String TAG = "NotificationListenerService";
 
     public MyService() {
 

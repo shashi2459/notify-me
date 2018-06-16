@@ -18,7 +18,7 @@ public class SpeechListener implements RecognitionListener {
     private static final String TAG = "SpeechListener";
     private static final int SUCCESS = 1;
     private static final int FAILURE = 0;
-    private Handler mHandler;
+    private final Handler mHandler;
 
     public SpeechListener(final Handler handler) {
         mHandler = handler;

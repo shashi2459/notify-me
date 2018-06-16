@@ -3,14 +3,12 @@ package android.shashi_sule.com.notifyme.ui;
 import android.Manifest;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.shashi_sule.com.notifyme.R;
 import android.shashi_sule.com.notifyme.extra.HeadPhoneListener;
 import android.shashi_sule.com.notifyme.extra.SpeechListener;
-import android.shashi_sule.com.notifyme.extra.Utils;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
 import android.support.annotation.NonNull;
@@ -20,22 +18,20 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 
 import static android.shashi_sule.com.notifyme.extra.Utils.INTENT_PHONE_STATE;
 import static android.shashi_sule.com.notifyme.extra.Utils.REQUEST_CONTACT_PERMISSION;
 import static android.shashi_sule.com.notifyme.extra.Utils.REQUEST_PHONE_STATE_PERMISSION;
-import static android.shashi_sule.com.notifyme.extra.Utils.REQUEST_RECORD_AUDIO_PERMISSION;
 
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "";//MainActivity
     public static final int DELAY_MILLIS = 5000;
-    HeadPhoneListener mHeadPhoneListener;
-    TextView mSpeechStateView;
-    Handler mHandler;
+    private HeadPhoneListener mHeadPhoneListener;
+    private TextView mSpeechStateView;
+    private Handler mHandler;
     private ArrayList<String> mWordList;
 
     @Override

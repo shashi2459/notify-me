@@ -15,7 +15,7 @@ import android.support.annotation.RequiresApi;
 
 public class Utils {
 
-    public static String INTENT_PHONE_STATE = "android.intent.action.PHONE_STATE";
+    public static final String INTENT_PHONE_STATE = "android.intent.action.PHONE_STATE";
     public static final int REQUEST_CONTACT_PERMISSION = 1001;
     public static final int REQUEST_PHONE_STATE_PERMISSION = 1002;
     public static final int REQUEST_RECORD_AUDIO_PERMISSION = 1003;

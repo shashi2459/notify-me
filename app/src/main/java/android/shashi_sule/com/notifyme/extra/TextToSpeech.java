@@ -7,13 +7,13 @@ import android.service.notification.StatusBarNotification;
 import android.util.Log;
 import android.widget.Toast;
 
-public class TextToSpeech implements android.speech.tts.TextToSpeech.OnInitListener {
+class TextToSpeech implements android.speech.tts.TextToSpeech.OnInitListener {
 
     private Context mContext;
 
     private static TextToSpeech sInstance;
     private static android.speech.tts.TextToSpeech sTextToSpeech;
-    private String TAG = "TextToSpeech";
+    private final String TAG = "TextToSpeech";
 
     private TextToSpeech() {
 
