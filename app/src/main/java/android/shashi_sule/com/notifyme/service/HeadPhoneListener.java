@@ -192,7 +192,6 @@ public class HeadPhoneListener extends BroadcastReceiver implements
 
                 // TODO: 12/3/2017 Pause music if running
 
-//                sTextToSpeech = new TextToSpeech(mContext, this);
                 int speak = sTextToSpeech.speak(text, TextToSpeech.QUEUE_FLUSH,
                         Bundle.EMPTY, UTTERANCE_ID);
 
@@ -255,11 +254,11 @@ public class HeadPhoneListener extends BroadcastReceiver implements
                             mSpeechRecognizer.stopListening();
                             ArrayList<String> list = (ArrayList<String>) msg.obj;
                             Log.e(TAG, "Words: " + list.toString());
-                            if (list.contains("Ignore") || list.contains("ignore")) {
+                            if (list.contains("Ignore") || list.contains("ignore") || list.contains("No") || list.contains("no")) {
                                 if (!hangUpIncomingCall()) {
                                     Log.e(TAG, "Unable to end Call!");
                                 }
-                            } else if (list.contains("Answer") || list.contains("answer") || list.contains("yes")) {
+                            } else if (list.contains("Answer") || list.contains("answer") || list.contains("Yes") || list.contains("yes")) {
                                 if (!receiveIncomingCall()) {
                                     Log.i(TAG, "Unable to receive Call!");
                                 }

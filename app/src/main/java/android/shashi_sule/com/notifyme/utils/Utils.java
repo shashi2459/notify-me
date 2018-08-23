@@ -69,28 +69,6 @@ public class Utils {
         return contactName;
     }
 
-    public void fun() {
-
-        Map<String, String> map = new ConcurrentHashMap<>();
-        map.put("Sule", "Shashi");
-        map.put("Sule", "Shubham");
-        map.put("Sule", "Shital");
-        map.put("Mane", "Shital");
-
-        Iterator<Map.Entry<String, String>> iterator = map.entrySet().iterator();
-        do {
-            System.out.println(iterator.next());
-        } while (iterator.hasNext());
-
-        for (Map.Entry<String, String> entry : map.entrySet()) {
-            System.out.println(entry.getKey() + "=" + entry.getKey());
-        }
-
-        for (String s : map.keySet()) {
-            System.out.println(s);
-        }
-    }
-
     @RequiresApi(api = Build.VERSION_CODES.M)
     public static boolean isHeadsetsConnected(Context context) {
         AudioManager audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);

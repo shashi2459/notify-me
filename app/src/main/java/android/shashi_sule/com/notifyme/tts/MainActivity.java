@@ -49,8 +49,6 @@ public class MainActivity extends AppCompatActivity {
         mHeadPhoneListener = new HeadPhoneListener();
         mSpeechStateView = (TextView) findViewById(R.id.stateTextView);
 
-//        Utils.isHeadsetsConnected(this);
-
         updateUI();
 
         /*
