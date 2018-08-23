@@ -1,16 +1,22 @@
 package android.shashi_sule.com.notifyme.tts;
 
 import android.Manifest;
+import android.content.ComponentName;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
+import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.shashi_sule.com.notifyme.R;
 import android.shashi_sule.com.notifyme.service.HeadPhoneListener;
+import android.shashi_sule.com.notifyme.utils.Utils;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -19,6 +25,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
 
 import static android.shashi_sule.com.notifyme.utils.Utils.INTENT_PHONE_STATE;
 import static android.shashi_sule.com.notifyme.utils.Utils.REQUEST_CONTACT_PERMISSION;
@@ -33,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
     private Handler mHandler;
     private ArrayList<String> mWordList;
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,6 +48,8 @@ public class MainActivity extends AppCompatActivity {
 
         mHeadPhoneListener = new HeadPhoneListener();
         mSpeechStateView = (TextView) findViewById(R.id.stateTextView);
+
+//        Utils.isHeadsetsConnected(this);
 
         updateUI();
 
@@ -57,7 +67,19 @@ public class MainActivity extends AppCompatActivity {
 
 //        onClick(recognizer, recognizerIntent);
         permissionsCheck();
-        registerForIntent();
+
+//        registerForIntent();
+
+
+        // Test code which can be deleted afterwords
+
+        AsyncTask<Void, Void, Void> asyncTask = new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(final Void... voids) {
+                return null;
+            }
+        };
+
     }
 
     private void registerForIntent() {
@@ -66,9 +88,16 @@ public class MainActivity extends AppCompatActivity {
         filter.addAction(Intent.ACTION_NEW_OUTGOING_CALL);
         filter.addAction(INTENT_PHONE_STATE);
 
-        Log.e(TAG, "register: Headphone listener!!!");
-        Log.e(TAG, "register: Outgoing Call listener!!!");
         registerReceiver(mHeadPhoneListener, filter);
+
+        // TODO: 6/17/2018 NEW WAY
+//        ComponentName component = new ComponentName(this, HeadPhoneListener.class);
+//        int status = getPackageManager().getComponentEnabledSetting(component);
+//        if(status == PackageManager.COMPONENT_ENABLED_STATE_ENABLED) {
+//            getPackageManager().setComponentEnabledSetting(component, PackageManager.COMPONENT_ENABLED_STATE_ENABLED , PackageManager.DONT_KILL_APP);
+//        } else if(status == PackageManager.COMPONENT_ENABLED_STATE_DISABLED) {
+//            getPackageManager().setComponentEnabledSetting(component, PackageManager.COMPONENT_ENABLED_STATE_DISABLED , PackageManager.DONT_KILL_APP);
+//        }
     }
 
     private void onClick(final SpeechRecognizer recognizer, final Intent recognizerIntent) {
@@ -170,7 +199,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
         Log.e(TAG, "unregister: Headphone listener!!!");
-        unregisterReceiver(mHeadPhoneListener);
+//        unregisterReceiver(mHeadPhoneListener);
     }
 
     @Override
