@@ -3,24 +3,20 @@ package android.shashi_sule.com.notifyme.service;
 import android.Manifest;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
+import android.shashi_sule.com.notifyme.storage.LocalPreferences;
 import android.shashi_sule.com.notifyme.tts.SpeechListener;
 import android.shashi_sule.com.notifyme.utils.Utils;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
 import android.speech.tts.TextToSpeech;
-import android.speech.tts.TextToSpeechService;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.telephony.TelephonyManager;
@@ -30,11 +26,11 @@ import android.widget.Toast;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 
+import static android.shashi_sule.com.notifyme.tts.MainActivity.DELAY_MILLIS;
 import static android.shashi_sule.com.notifyme.utils.Utils.INTENT_PHONE_STATE;
 import static android.shashi_sule.com.notifyme.utils.Utils.REQUEST_CONTACT_PERMISSION;
 import static android.shashi_sule.com.notifyme.utils.Utils.REQUEST_PHONE_STATE_PERMISSION;
 import static android.shashi_sule.com.notifyme.utils.Utils.REQUEST_RECORD_AUDIO_PERMISSION;
-import static android.shashi_sule.com.notifyme.tts.MainActivity.DELAY_MILLIS;
 
 /**
  * @author Shashi on 10/21/2017.
@@ -43,12 +39,21 @@ import static android.shashi_sule.com.notifyme.tts.MainActivity.DELAY_MILLIS;
 public class HeadPhoneListener extends BroadcastReceiver implements
         android.speech.tts.TextToSpeech.OnInitListener {
 
-    private static final String TAG = "HeadPhoneListener";
     public static final String UTTERANCE_ID = "11111";
+    private static final String TAG = "HeadPhoneListener";
     private static android.speech.tts.TextToSpeech sTextToSpeech;
     private Context mContext;
     private Intent mIntent;
     private SpeechRecognizer mSpeechRecognizer;
+    private boolean mHangedUp;
+    private boolean mDisconnected;
+    private boolean mReceived;
+
+    private Handler mMainHandler;
+
+    private Looper mSpeechLooper;
+    private Looper mMainLooper;
+
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -130,6 +135,16 @@ public class HeadPhoneListener extends BroadcastReceiver implements
     private void handleCallIntent() {
         final String state = mIntent.getStringExtra("state");
 
+        /**
+         * Check for
+         * Notifications enabled from app settings
+         */
+        boolean notificationsEnabled = LocalPreferences
+                .getInstance().isNotificationsEnabled(mContext);
+        if (!notificationsEnabled) {
+            return;
+        }
+
         if (!Utils.isHeadsetsConnected(mContext)) {
             Log.e(TAG, "handleCallIntent: Headsets are not plugged");
             return;
@@ -186,7 +201,7 @@ public class HeadPhoneListener extends BroadcastReceiver implements
 
                 boolean validNumber = true;
                 if (!Utils.isNumberValid(number)) {
-                    text = "Sir, I rejected a call which was not a valid number";
+                    text = "Rejecting a call which is coming from an invalid number";
                     validNumber = false;
                 }
 
@@ -199,8 +214,12 @@ public class HeadPhoneListener extends BroadcastReceiver implements
                     Log.e(TAG, "Error while reading text!");
                     Toast.makeText(mContext, "Error while reading text!", Toast.LENGTH_SHORT)
                             .show();
+                    mDisconnected = true;
                 } else if (speak == TextToSpeech.SUCCESS) {
-                    if (!validNumber) return;
+                    if (!validNumber) {
+                        Log.e(TAG, "Error#Invalid number!");
+                        return;
+                    }
 
                     new Handler().postDelayed(new Runnable() {
                         public void run() {
@@ -208,15 +227,16 @@ public class HeadPhoneListener extends BroadcastReceiver implements
                         }
                     }, 3000);
                 } else {
-                    Log.e(TAG, "Error: " + speak);
+                    Log.e(TAG, "Error# " + speak);
                 }
 
             } else {
-                Log.e(TAG, "number is null or empty");
+                Log.e(TAG, "Error#Number is null or empty");
             }
         } else if (state.equals(TelephonyManager.EXTRA_STATE_OFFHOOK)) {
             Log.i(TAG, "handleCallIntent: EXTRA_STATE_OFFHOOK");
             // TODO: 12/3/2017 Play music if paused previously
+            mDisconnected = true;
         }
     }
 
@@ -224,6 +244,7 @@ public class HeadPhoneListener extends BroadcastReceiver implements
         Log.e(TAG, "initSpeechRecognizer: ");
 
         Handler handler = getHandler();
+        mSpeechLooper = handler.getLooper();
 
         mSpeechRecognizer = SpeechRecognizer.createSpeechRecognizer(mContext.getApplicationContext());
         final Intent recognizerIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
@@ -252,15 +273,27 @@ public class HeadPhoneListener extends BroadcastReceiver implements
                     case 1:
                         if (msg.obj instanceof ArrayList) {
                             mSpeechRecognizer.stopListening();
+
+                            // TODO: 8/26/2018 End this Thread and wake up main thread
+
+/*
+                            mSpeechLooper.getThread().suspend();
+                            mMainLooper.getThread().notify();
+*/
+
                             ArrayList<String> list = (ArrayList<String>) msg.obj;
                             Log.e(TAG, "Words: " + list.toString());
                             if (list.contains("Ignore") || list.contains("ignore") || list.contains("No") || list.contains("no")) {
-                                if (!hangUpIncomingCall()) {
+                                if (!mHangedUp && !hangUpIncomingCall()) {
                                     Log.e(TAG, "Unable to end Call!");
+                                } else if (mHangedUp) {
+                                    Log.e(TAG, "The Call was already hanged up!");
                                 }
                             } else if (list.contains("Answer") || list.contains("answer") || list.contains("Yes") || list.contains("yes")) {
                                 if (!receiveIncomingCall()) {
                                     Log.i(TAG, "Unable to receive Call!");
+                                } else if (mReceived) {
+                                    Log.e(TAG, "The Call was already received!");
                                 }
                             }
                         }
@@ -284,19 +317,39 @@ public class HeadPhoneListener extends BroadcastReceiver implements
             Toast.makeText(mContext, "Text to speech not initiated!", Toast.LENGTH_SHORT).show();
             Log.d(TAG, "not initiated!");
         } else {
+//            while (true) {
             String state = mIntent.getStringExtra("state");
+            if (mDisconnected || mHangedUp || mReceived) {
+                sTextToSpeech.shutdown();
+                sTextToSpeech.stop();
+//                    break;
+            }
+
+//                mMainHandler = new Handler();
+            mMainLooper = Looper.getMainLooper();
             speak(mIntent, state);
+
+/*                try {
+                    Thread.sleep(4000);
+//                    Thread thread = Thread.currentThread();
+//                    long mainThreadID = thread.getId();
+
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }*/
+//            }
         }
     }
 
     public boolean hangUpIncomingCall() {
-        Log.e(TAG, "hangUpIncomingCall: ");
+        Log.i(TAG, "hangUpIncomingCall: ");
         try {
             // Get the boring old TelephonyManager
             TelephonyManager telephonyManager =
                     (TelephonyManager) mContext.getSystemService(Context.TELEPHONY_SERVICE);
 
             if (telephonyManager == null) {
+                Log.e(TAG, "Error#PhoneStateReceiver: " + null);
                 return false;
             }
 
@@ -317,11 +370,11 @@ public class HeadPhoneListener extends BroadcastReceiver implements
 
             // Invoke endCall()
             methodEndCall.invoke(telephonyInterface);
-
         } catch (Exception ex) { // Many things can go wrong with reflection calls
             Log.d(TAG, "PhoneStateReceiver **" + ex.toString());
             return false;
         }
+        mHangedUp = true;
         return true;
     }
 
@@ -353,6 +406,7 @@ public class HeadPhoneListener extends BroadcastReceiver implements
 
             // Invoke endCall()
             methodEndCall.invoke(telephonyInterface);
+            mReceived = true;
 
         } catch (Exception ex) { // Many things can go wrong with reflection calls
             Log.d(TAG, "PhoneStateReceiver **" + ex.toString());
