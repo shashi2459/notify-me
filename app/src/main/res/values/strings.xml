@@ -63,4 +63,8 @@
     <string name="hear_all_your_notifications_n_instead_of_reading_them_cheers">
         Hear all your notifications instead of reading them.\nCheers!!!</string>
     <string name="notify">Notify</string>
+    <string name="about">About</string>
+    <string name="setting">Setting</string>
+    <string name="notifications">Notifications</string>
+    <string name="notifications_description">Notifications description</string>
 </resources>

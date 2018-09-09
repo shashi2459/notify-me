@@ -6,7 +6,7 @@
     <uses-permission android:name="android.permission.CALL_PHONE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
-    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS"/>
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
 
     <application
         android:allowBackup="false"
@@ -35,18 +35,21 @@
             </intent-filter>
         </receiver>
 
-        <!--<service-->
-            <!--android:name=".service.MyService"-->
-            <!--android:enabled="true"-->
-            <!--android:exported="true"-->
-            <!--android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">-->
-            <!--<intent-filter>-->
-                <!--<action android:name="android.service.notification.NotificationListenerService" />-->
-            <!--</intent-filter>-->
-        <!--</service>-->
+        <!-- <service -->
+        <!-- android:name=".service.MyService" -->
+        <!-- android:enabled="true" -->
+        <!-- android:exported="true" -->
+        <!-- android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE"> -->
+        <!-- <intent-filter> -->
+        <!-- <action android:name="android.service.notification.NotificationListenerService" /> -->
+        <!-- </intent-filter> -->
+        <!-- </service> -->
 
         <activity
             android:name=".setting.SettingsActivity"
+            android:label="@string/title_activity_settings" />
+        <activity
+            android:name=".setting.SettingActivity"
             android:label="@string/title_activity_settings" />
 
     </application>

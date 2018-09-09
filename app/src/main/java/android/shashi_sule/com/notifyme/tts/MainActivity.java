@@ -1,10 +1,8 @@
 package android.shashi_sule.com.notifyme.tts;
 
 import android.Manifest;
-import android.content.ComponentName;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -12,7 +10,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.shashi_sule.com.notifyme.R;
 import android.shashi_sule.com.notifyme.service.HeadPhoneListener;
-import android.shashi_sule.com.notifyme.utils.Utils;
+import android.shashi_sule.com.notifyme.setting.SettingActivity;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
 import android.support.annotation.NonNull;
@@ -25,7 +23,6 @@ import android.view.View;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.concurrent.ExecutionException;
 
 import static android.shashi_sule.com.notifyme.utils.Utils.INTENT_PHONE_STATE;
 import static android.shashi_sule.com.notifyme.utils.Utils.REQUEST_CONTACT_PERMISSION;
@@ -33,8 +30,8 @@ import static android.shashi_sule.com.notifyme.utils.Utils.REQUEST_PHONE_STATE_P
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final String TAG = "";//MainActivity
     public static final int DELAY_MILLIS = 5000;
+    private static final String TAG = "";//MainActivity
     private HeadPhoneListener mHeadPhoneListener;
     private TextView mSpeechStateView;
     private Handler mHandler;
@@ -77,6 +74,7 @@ public class MainActivity extends AppCompatActivity {
                 return null;
             }
         };
+//        asyncTask.executeOnExecutor()
 
     }
 
@@ -194,26 +192,51 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onSaveInstanceState(final Bundle outState) {
+        Log.e(TAG, "onSaveInstanceState");
+    }
+
+    @Override
+    protected void onRestoreInstanceState(final Bundle savedInstanceState) {
+        Log.e(TAG, "onRestoreInstanceState");
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+
+//        ArrayList<String> list = new ArrayList<>();
+//        list.parallelStream()
+//        list.forEach(new Consumer<String>() {
+//            @Override
+//            public void accept(final String s) {
+//
+//            }
+//        });
+        Log.e(TAG, "onRestart");
+    }
+
+    @Override
     protected void onStop() {
         super.onStop();
+        Log.e(TAG, "onStop");
         Log.e(TAG, "unregister: Headphone listener!!!");
 //        unregisterReceiver(mHeadPhoneListener);
     }
 
     @Override
     public boolean onCreateOptionsMenu(final Menu menu) {
-//        getMenuInflater().inflate(R.menu.setting_menu, menu);
+        getMenuInflater().inflate(R.menu.menu_settings, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(final MenuItem item) {
-//        switch (item.getItemId()) {
-//            case R.id.action_setting:
-//                Toast.makeText(this, "", Toast.LENGTH_SHORT).show();
-//                startActivity(new Intent(this, SettingsActivity.class));
-//                break;
-//        }
+        switch (item.getItemId()) {
+            case R.id.action_setting:
+                startActivity(new Intent(this, SettingActivity.class));
+                break;
+        }
         return true;
     }
 
