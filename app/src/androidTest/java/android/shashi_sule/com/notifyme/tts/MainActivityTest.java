@@ -56,6 +56,7 @@ public class MainActivityTest {
     @Test
     public void shouldAccessOptionsMenu() {
 
+        /* Opens options menu */
         openActionBarOverflowOrOptionsMenu(getInstrumentation().getTargetContext());
     }
 
@@ -64,7 +65,6 @@ public class MainActivityTest {
 
         openActionBarOverflowOrOptionsMenu(getInstrumentation().getTargetContext());
 
-//        onView(withId(action_setting)).perform(click());
         ViewInteraction appCompatTextView = onView(
                 allOf(withId(R.id.title), withText("Setting"),
                         childAtPosition(

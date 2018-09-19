@@ -23,15 +23,14 @@ public class Utils {
     public static final int REQUEST_RECORD_AUDIO_PERMISSION = 1003;
     private static String TAG = Utils.class.getSimpleName();
 
+    /**
+     * @param activity   - Context
+     * @param permission - Permission to check
+     * @param reqCode    - Request code
+     */
     @RequiresApi(api = Build.VERSION_CODES.M)
     public static void requestPermission(Activity activity, final String permission,
                                          final int reqCode) {
-//        if (checkSelfPermission(Manifest.permission.READ_CONTACTS) !=
-//                PackageManager.PERMISSION_GRANTED) {
-//
-//            requestPermissions(new String[]{Manifest.permission.READ_CONTACTS},
-//                    REQUEST_CONTACT_PERMISSION);
-//        }
         if (activity.checkSelfPermission(permission) !=
                 PackageManager.PERMISSION_GRANTED) {
 
@@ -39,12 +38,17 @@ public class Utils {
         }
     }
 
+    /**
+     * @param phoneNumber - Phone number
+     * @param context - Context
+     * @return Contact name if the number is present in Contact list, otherwise number
+     */
     public static String getContactName(final String phoneNumber, Context context) {
+
         Uri uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri.encode(phoneNumber));
-
         String[] projection = new String[]{ContactsContract.PhoneLookup.DISPLAY_NAME};
-
         String contactName = "";
+
         Cursor cursor = context.getContentResolver().query(uri, projection, null, null, null);
 
         if (cursor != null) {
@@ -61,26 +65,41 @@ public class Utils {
         return contactName;
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.M)
+    /**
+     * @param context - Context
+     * @return true if headsets plugged otherwise false
+     */
     public static boolean isHeadsetsConnected(Context context) {
+
         AudioManager audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
         boolean wiredHeadsetOn = false;
+
         if (audioManager != null) {
-//            AudioDeviceInfo[] devices = audioManager.getDevices(AudioManager.GET_DEVICES_ALL);
-//            for (AudioDeviceInfo device : devices) {
-//                if (device.getType() == 3 || device.getType() == 4) {
-//                    Log.e("ConnectedDevices", device.getProductName().toString());
-//                    return true;
-//                }
-//            }
-//            Log.e("ConnectedDevices", Arrays.toString(devices));
+
+            /*
+            Below code requires API M
+            @RequiresApi(api = Build.VERSION_CODES.M)
+
+            AudioDeviceInfo[] devices = audioManager.getDevices(AudioManager.GET_DEVICES_ALL);
+            for (AudioDeviceInfo device : devices) {
+                if (device.getType() == 3 || device.getType() == 4) {
+                    Log.e("ConnectedDevices", device.getProductName().toString());
+                    return true;
+                }
+            }
+            Log.e("ConnectedDevices", Arrays.toString(devices));
+            */
             wiredHeadsetOn = audioManager.isWiredHeadsetOn();
         }
         return wiredHeadsetOn;
     }
 
+    /**
+     * @param number - Phone number
+     * @return true if the number is valid phone number, otherwise false
+     */
     public static boolean isNumberValid(final String number) {
-        // TODO: 8/24/2018 Check for SPAM callers
+        // TODO: 8/24/2018 Add check for SPAM callers
 
         String actualNumber = number;
         if (number.contains("+91") || number.length() == 13) {
@@ -93,9 +112,7 @@ public class Utils {
             return false;
         }
 
-        /*
-        Check for Internet numbers
-        */
+        /* Check for Internet numbers */
         if (digitAtZero == '1' && actualNumber.charAt(1) == '4' && actualNumber.charAt(2) == '0') {
             Log.e(TAG, "Error#Number starting from 140");
             return false;
