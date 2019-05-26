@@ -1,6 +1,6 @@
 # notify-me
    
-   This app will let you know who is calling you without looking at phone, just by hearing calling person's name.
+   This app will let you know who is calling without looking at phone, just by hearing calling person's name.
    isn't that cool?
   
    If you have connected your headsets to phone and your phone rings, then you will hear a calling persons's name (if the number is present in your contact).
