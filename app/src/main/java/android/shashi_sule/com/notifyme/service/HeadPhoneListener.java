@@ -20,14 +20,18 @@ import android.speech.tts.TextToSpeech;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.telephony.TelephonyManager;
+import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Objects;
 
 import static android.shashi_sule.com.notifyme.tts.MainActivity.DELAY_MILLIS;
 import static android.shashi_sule.com.notifyme.utils.Utils.INTENT_PHONE_STATE;
+import static android.shashi_sule.com.notifyme.utils.Utils.INTENT_PHONE_STATE_CHANGED;
+import static android.shashi_sule.com.notifyme.utils.Utils.REQUEST_BLUETOOTH_PERMISSION;
 import static android.shashi_sule.com.notifyme.utils.Utils.REQUEST_CONTACT_PERMISSION;
 import static android.shashi_sule.com.notifyme.utils.Utils.REQUEST_PHONE_STATE_PERMISSION;
 import static android.shashi_sule.com.notifyme.utils.Utils.REQUEST_RECORD_AUDIO_PERMISSION;
@@ -59,21 +63,27 @@ public class HeadPhoneListener extends BroadcastReceiver implements
     public void onReceive(Context context, Intent intent) {
         mContext = context;
 
-        if (intent.getAction() == null) {
+        String action = intent.getAction();
+        Log.e(TAG, "onReceive#STATE: " + action);
+
+        if (action == null) {
             return;
         }
 
         mIntent = intent;
 
-        if (intent.getAction().equals(Intent.ACTION_HEADSET_PLUG)) {
+        if (action.equals(Intent.ACTION_HEADSET_PLUG)) {
 //            handleHeadsetIntent(context, intent);
-        } else if (intent.getAction().equals(INTENT_PHONE_STATE)) {
+        } else if (action.equals(INTENT_PHONE_STATE) || action.equals(INTENT_PHONE_STATE_CHANGED)) {
+            Log.e(TAG, "onReceive#STATE: " + action);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 if (mContext.checkSelfPermission(Manifest.permission.READ_CONTACTS) ==
                         PackageManager.PERMISSION_GRANTED && mContext.checkSelfPermission(
                         Manifest.permission.READ_PHONE_STATE) ==
                         PackageManager.PERMISSION_GRANTED) {
-                    handleCallIntent();
+                    String number = Objects.requireNonNull(mIntent.getExtras()).getString(TelephonyManager.EXTRA_INCOMING_NUMBER);
+                    if (!TextUtils.isEmpty(number))
+                        handleCallIntent();
                 } else {
                     checkPermissions();
                     Toast.makeText(mContext, "Insufficient permissions!", Toast.LENGTH_SHORT)
@@ -97,6 +107,10 @@ public class HeadPhoneListener extends BroadcastReceiver implements
             Utils.requestPermission((Activity) mContext, Manifest.permission.RECORD_AUDIO,
                     REQUEST_RECORD_AUDIO_PERMISSION);
         }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            Utils.requestPermission((Activity) mContext, Manifest.permission.BLUETOOTH,
+                    REQUEST_BLUETOOTH_PERMISSION);
+        }
     }
 
     private void handleHeadsetIntent(final Context context, final Intent intent) {
@@ -119,7 +133,7 @@ public class HeadPhoneListener extends BroadcastReceiver implements
                 Log.i(TAG, "onReceive: Headphone disconnected!!!");
 
                 /*
-                    Stop TEXT TO SPEECH service here
+                 * Stop TEXT TO SPEECH service here
                  */
                 context.stopService(service);
                 Log.e(TAG, "onReceive: Stopping Text to speech!!!");
@@ -134,21 +148,40 @@ public class HeadPhoneListener extends BroadcastReceiver implements
     @RequiresApi(api = Build.VERSION_CODES.M)
     private void handleCallIntent() {
         final String state = mIntent.getStringExtra("state");
+        Log.e(TAG, "handleCallIntent#STATE: " + state);
 
-        /**
+        String number = Objects.requireNonNull(mIntent.getExtras()).getString(TelephonyManager.EXTRA_INCOMING_NUMBER);
+        if (!Utils.isNumberValid(number)) {
+            hangUpIncomingCall();
+        }
+
+        /*
          * Check for
          * Notifications enabled from app settings
          */
         boolean notificationsEnabled = LocalPreferences
                 .getInstance().isNotificationsEnabled(mContext);
         if (!notificationsEnabled) {
+            Log.d(TAG, "handleCallIntent: Notifications not enabled!");
             return;
         }
 
         if (!Utils.isHeadsetsConnected(mContext)) {
-            Log.e(TAG, "handleCallIntent: Headsets are not plugged");
+            Log.d(TAG, "handleCallIntent: Headsets are not plugged!");
             return;
         }
+
+        /* Check if Music is active */
+        /*if (mAudioManager != null && mAudioManager.isMusicActive()) {
+
+         *//* Get Stream volume value *//*
+            sStreamVolume = mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+
+            *//* Mute Steam and unMute later *//*
+            mAudioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_LOWER, 0);
+
+        }*/
+
 
         if (sTextToSpeech == null) {
 
@@ -192,12 +225,12 @@ public class HeadPhoneListener extends BroadcastReceiver implements
             String number = intent.getExtras().getString(TelephonyManager.EXTRA_INCOMING_NUMBER);
             Log.i(TAG, "handleCallIntent: EXTRA_STATE_RINGING");
             Log.i(TAG, "Mobile No: " + number);
-            if (number != null) {
+            if (!TextUtils.isEmpty(number)) {
 
                 String contactName = Utils.getContactName(number, mContext);
                 Log.i(TAG, "Mobile contact: " + contactName);
 
-                String text = contactName + " is calling you. Would you like to pick it up?";
+                String text = contactName + " is calling you. Would you like to receive?";
 
                 boolean validNumber = true;
                 if (!Utils.isNumberValid(number)) {
@@ -282,7 +315,7 @@ public class HeadPhoneListener extends BroadcastReceiver implements
 */
 
                             ArrayList<String> list = (ArrayList<String>) msg.obj;
-                            Log.e(TAG, "Words: " + list.toString());
+                            Log.d(TAG, "Words: " + list.toString());
                             if (list.contains("Ignore") || list.contains("ignore") || list.contains("No") || list.contains("no")) {
                                 if (!mHangedUp && !hangUpIncomingCall()) {
                                     Log.e(TAG, "Unable to end Call!");
@@ -301,10 +334,14 @@ public class HeadPhoneListener extends BroadcastReceiver implements
                         break;
                     case 0:
                         mSpeechRecognizer.stopListening();
-                        if (msg.obj instanceof Integer)
-                            if (msg.obj == (Integer) 7) { // Error code: 7
-                                initSpeechRecognizer();
-                            }
+
+                        /* Adjusting Stream volume to last value */
+//                        mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_RAISE, sStreamVolume);
+
+//                        if (msg.obj instanceof Integer)
+//                            if (msg.obj == (Integer) 7) { // Error code: 7
+//                                initSpeechRecognizer();
+//                            }
                         break;
                 }
             }

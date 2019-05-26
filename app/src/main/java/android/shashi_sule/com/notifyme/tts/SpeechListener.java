@@ -57,7 +57,7 @@ public class SpeechListener implements RecognitionListener {
 
     @Override
     public void onError(final int i) {
-        Log.e(TAG, "onError: " + i);
+        Log.d(TAG, "onError: " + i);
         Message message = mHandler.obtainMessage(FAILURE, i);
         mHandler.sendMessage(message);
     }

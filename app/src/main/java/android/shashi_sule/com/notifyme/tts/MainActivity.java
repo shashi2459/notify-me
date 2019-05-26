@@ -3,7 +3,6 @@ package android.shashi_sule.com.notifyme.tts;
 import android.Manifest;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -11,6 +10,8 @@ import android.os.Message;
 import android.shashi_sule.com.notifyme.R;
 import android.shashi_sule.com.notifyme.service.HeadPhoneListener;
 import android.shashi_sule.com.notifyme.setting.SettingActivity;
+import android.shashi_sule.com.notifyme.utils.TestClass;
+import android.shashi_sule.com.notifyme.utils.Utils;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
 import android.support.annotation.NonNull;
@@ -30,10 +31,11 @@ import static android.shashi_sule.com.notifyme.utils.Utils.REQUEST_PHONE_STATE_P
 
 public class MainActivity extends AppCompatActivity {
 
-    public static final int DELAY_MILLIS = 5000;
+    public static final int DELAY_MILLIS = 1000;
     private static final String TAG = "";//MainActivity
     private HeadPhoneListener mHeadPhoneListener;
     private TextView mSpeechStateView;
+    private TextView mHeadsetStatusTextView;
     private Handler mHandler;
     private ArrayList<String> mWordList;
 
@@ -44,7 +46,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         mHeadPhoneListener = new HeadPhoneListener();
-        mSpeechStateView = (TextView) findViewById(R.id.stateTextView);
+//        mSpeechStateView = (TextView) findViewById(R.id.stateTextView);
+        mHeadsetStatusTextView = (TextView) findViewById(R.id.headsetStatusTextView);
 
         updateUI();
 
@@ -67,14 +70,6 @@ public class MainActivity extends AppCompatActivity {
 
 
         // Test code which can be deleted afterwords
-
-        AsyncTask<Void, Void, Void> asyncTask = new AsyncTask<Void, Void, Void>() {
-            @Override
-            protected Void doInBackground(final Void... voids) {
-                return null;
-            }
-        };
-//        asyncTask.executeOnExecutor()
 
     }
 
@@ -143,7 +138,7 @@ public class MainActivity extends AppCompatActivity {
                             }
                             Log.i(TAG, "Error: " + msg.obj);
                         } else {
-                            mSpeechStateView.setTextColor(getColor(android.R.color.holo_red_dark));
+                            mSpeechStateView.setTextColor(getResources().getColor(android.R.color.holo_red_dark));
                             mSpeechStateView.setText("Error: " + msg.obj.toString());
                         }
                         break;
@@ -152,6 +147,7 @@ public class MainActivity extends AppCompatActivity {
         };
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     private void permissionsCheck() {
 //        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
 //            Utils.requestPermission(this, Manifest.permission.READ_CONTACTS,
@@ -168,9 +164,9 @@ public class MainActivity extends AppCompatActivity {
 //        }
 
         requestPermissions(new String[]{
-                Manifest.permission.READ_CONTACTS,
-                Manifest.permission.RECORD_AUDIO,
-                Manifest.permission.READ_PHONE_STATE},
+                        Manifest.permission.READ_CONTACTS,
+                        Manifest.permission.RECORD_AUDIO,
+                        Manifest.permission.READ_PHONE_STATE},
                 REQUEST_CONTACT_PERMISSION);
     }
 
@@ -199,6 +195,23 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onRestoreInstanceState(final Bundle savedInstanceState) {
         Log.e(TAG, "onRestoreInstanceState");
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        /* Update Headsets Plugged/Unplugged status*/
+        int headsetsPlugged = R.string.headsets_plugged;
+        if (!Utils.isHeadsetsConnected(this)) {
+            headsetsPlugged = R.string.headsets_not_plugged;
+        }
+        mHeadsetStatusTextView.setText(headsetsPlugged);
+
+        // FIXME: 9/21/2018 Remove below code
+        TestClass testClass = new TestClass();
+        testClass.returnInteger(10);
     }
 
     @Override
